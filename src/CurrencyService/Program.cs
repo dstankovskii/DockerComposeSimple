@@ -1,6 +1,5 @@
 using CurrencyService.GrpcServices;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Hosting.Systemd;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -9,16 +8,13 @@ Log.Logger = new LoggerConfiguration()
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (SystemdHelpers.IsSystemdService())
-{
-    builder.Host.UseSystemd();
-}
-
 builder.Host.UseSerilog();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
     var grpcUrl = builder.Configuration["Kestrel:Endpoints:Grpc:Url"];
+    var certPath = builder.Configuration["Kestrel:Certificates:Default:Path"];
+    var certPassword = builder.Configuration["Kestrel:Certificates:Default:Password"];
 
     // Ensure that the gRPC URL is explicitly set in configuration.
     // This avoids runtime errors when deploying to environments with different setups.
@@ -27,12 +23,11 @@ builder.WebHost.ConfigureKestrel(options =>
         throw new InvalidOperationException("gRPC URL configuration is missing. Please set it in appsettings.json or via environment variables (Kestrel__Endpoints__Grpc__Url).");
     }
 
-    options.UseSystemd();
     // options.ListenAnyIP(new Uri(grpcUrl).Port);
     options.ListenAnyIP(new Uri(grpcUrl).Port, o =>
     {
-        o.Protocols = HttpProtocols.Http1AndHttp2;
-        o.UseHttps();
+        o.Protocols = HttpProtocols.Http2;
+        o.UseHttps(certPath!, certPassword);
     });
 });
 

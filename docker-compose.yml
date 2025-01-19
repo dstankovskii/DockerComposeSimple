@@ -7,9 +7,7 @@ services:
       - "5000:5000" # HTTP
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - GrpcServices__UserService=http://user-service:8101
-      - GrpcServices__CurrencyService=http://currency-service:8102
-      - GrpcServices__FinanceService=http://finance-service:8103
+      - GrpcServices__CurrencyService=https://currency-service:8101
     networks:
       - app-network
 
@@ -18,38 +16,14 @@ services:
       context: .
       dockerfile: src/CurrencyService/Dockerfile
     ports:
-      - "8102:8102" # gRPC
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=172.17.0.1;Port=5432;Database=currency_manager_db;Username=ds1;Password=Temp3232
-      - Kestrel__Endpoints__Grpc__Url=http://0.0.0.0:8102
-    networks:
-      - app-network
-
-  finance-service:
-    build:
-      context: .
-      dockerfile: src/FinanceService/Dockerfile
-    ports:
-      - "8103:8103" # gRPC
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - GrpcServices__CurrencyService=http://currency-service:8102
-      - ConnectionStrings__DefaultConnection=Host=172.17.0.1;Port=5432;Database=currency_manager_db;Username=ds1;Password=Temp3232
-      - Kestrel__Endpoints__Grpc__Url=http://0.0.0.0:8103
-    networks:
-      - app-network
-
-  user-service:
-    build:
-      context: .
-      dockerfile: src/UserService/Dockerfile
-    ports:
       - "8101:8101" # gRPC
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=172.17.0.1;Port=5432;Database=currency_manager_db;Username=ds1;Password=Temp3232
-      - Kestrel__Endpoints__Grpc__Url=http://0.0.0.0:8101
+      - Kestrel__Endpoints__Grpc__Url=https://0.0.0.0:8101
+      - Kestrel__Certificates__Default__Path=/app/Certificates/localhost.pfx
+      - Kestrel__Certificates__Default__Password=yourpassword
+    volumes:
+      - /home/ds-1/Documents/Projects/Certificates:/app/Certificates:ro
     networks:
       - app-network
 
