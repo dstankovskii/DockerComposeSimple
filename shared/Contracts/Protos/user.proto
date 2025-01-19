@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option csharp_namespace = "Contracts.User";
+
+// Service for user management operations such as registration and authentication.
+service UserGrpcService {
+    // Registers a new user in the system.
+    rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+
+    // Authenticates a user and generates a JWT token.
+    rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse);
+}
+
+// Request message for registering a new user.
+message RegisterUserRequest {
+    string name = 1; // Full name of the user.
+    string login = 2; // Login or username (must be unique).
+    string password = 3; // Plain-text password.
+}
+
+// Response message for registering a new user.
+message RegisterUserResponse {
+    string message = 1; // Message indicating the result of the registration.
+}
+
+// Request message for authenticating a user.
+message AuthenticateUserRequest {
+    string login = 1; // Login or username of the user.
+    string password = 2; // Plain-text password of the user.
+}
+
+// Response message for authenticating a user.
+message AuthenticateUserResponse {
+    string token = 1; // JWT token issued upon successful authentication.
+}

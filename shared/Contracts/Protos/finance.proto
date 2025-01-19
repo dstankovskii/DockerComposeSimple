@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+option csharp_namespace = "Contracts.Finance";
+
+// Service for managing user subscriptions to currencies and retrieving exchange rates.
+service FinanceGrpcService {
+  // Retrieves the list of currencies a user is subscribed to.
+  rpc GetUserSubscriptions (UserRequest) returns (SubscriptionList);
+
+  // Subscribes a user to a specific currency.
+  rpc SubscribeToCurrency (SubscriptionRequest) returns (OperationStatus);
+
+  // Unsubscribes a user from a specific currency.
+  rpc UnsubscribeFromCurrency (SubscriptionRequest) returns (OperationStatus);
+
+  // Retrieves the exchange rates of the currencies a user is subscribed to.
+  rpc GetUserCurrencyRates (UserRequest) returns (CurrencyRateList);
+}
+
+// Request message containing the user ID.
+message UserRequest {
+  string user_id = 1; // Unique identifier of the user.
+}
+
+// Request message for subscribing or unsubscribing to/from a currency.
+message SubscriptionRequest {
+  string user_id = 1;    // Unique identifier of the user.
+  string currency_id = 2; // Unique identifier of the currency.
+}
+
+// Response message containing a list of currency IDs the user is subscribed to.
+message SubscriptionList {
+  repeated string currency_ids = 1; // List of currency IDs.
+}
+
+// Represents a currency with its exchange rate.
+message CurrencyRate {
+  string name = 1; // Name of the currency (e.g., "US Dollar").
+  int32 nominal = 2; // Nominal value (e.g., 1, 10, 100).
+  int64 rate = 3; // Exchange rate relative to a base currency.
+}
+
+// Response message containing a list of currencies with their exchange rates.
+message CurrencyRateList {
+  repeated CurrencyRate currencies = 1; // List of currencies with exchange rates.
+}
+
+// Represents the status of an operation (e.g., subscription or unsubscription).
+message OperationStatus {
+  bool success = 1;  // Indicates whether the operation was successful.
+  string message = 2; // Error or success message.
+}

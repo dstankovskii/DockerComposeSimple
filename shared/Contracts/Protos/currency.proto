@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "Contracts.Currency";
+
+// Service for retrieving currency information.
+service CurrencyGrpcService {
+  // Retrieves all available currencies.
+  rpc GetCurrencies (Empty) returns (CurrencyList);
+
+  // Retrieves currencies by their identifiers.
+  rpc GetCurrenciesByIds (CurrencyRequest) returns (CurrencyList);
+}
+
+// Empty message used for requests without parameters.
+message Empty {}
+
+// Represents a currency with its basic information.
+message Currency {
+  string id = 1;   // Unique identifier of the currency.
+  string name = 2; // Name of the currency (e.g., "US Dollar").
+  int32 nominal = 3; // Nominal value (e.g., 1, 10, 100).
+  int64 rate = 4; // Exchange rate relative to a base currency.
+}
+
+// Response message containing a list of currencies.
+message CurrencyList {
+  repeated Currency currencies = 1; // List of currencies with their details.
+}
+
+// Request message for retrieving currencies by their identifiers.
+message CurrencyRequest {
+  repeated string currency_ids = 1; // List of currency IDs to retrieve.
+}

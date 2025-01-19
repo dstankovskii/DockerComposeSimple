@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="all" />
+    <PackageReference Include="Google.Protobuf" Version="3.28.3" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
+  </ItemGroup>
+
+  <!-- Configure the generation of proto files only on request -->
+  <!-- $ dotnet build /p:GenerateProtos=true -->
+  <ItemGroup Condition="'$(GenerateProtos)' == 'true'">
+    <Protobuf Include="Protos/currency.proto" OutputDir="Generated/Currency" GrpcServices="Both" />
+    <Protobuf Include="Protos/finance.proto" OutputDir="Generated/Finance" GrpcServices="Both" />
+    <Protobuf Include="Protos/user.proto" OutputDir="Generated/User" GrpcServices="Both" />
+  </ItemGroup>
+
+</Project>
